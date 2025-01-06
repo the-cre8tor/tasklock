@@ -1,7 +1,14 @@
-use anchor_lang::prelude::*;
-use events::*;
+mod errors;
+mod events;
+mod instructions;
+mod state;
 
-pub mod events;
+use anchor_lang::prelude::*;
+
+use errors::*;
+use events::*;
+use instruction::*;
+use state::*;
 
 declare_id!("BzsbqDh3B1zyXVDWQWBTBYLgN5LDRxShxLmAutUZtMfT");
 
