@@ -1,4 +1,7 @@
 use anchor_lang::prelude::*;
+use events::*;
+
+pub mod events;
 
 declare_id!("BzsbqDh3B1zyXVDWQWBTBYLgN5LDRxShxLmAutUZtMfT");
 
