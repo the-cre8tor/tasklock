@@ -1,14 +1,11 @@
+use anchor_lang::prelude::*;
+
 mod errors;
 mod events;
 mod instructions;
 mod state;
 
-use anchor_lang::prelude::*;
-
-use errors::*;
-use events::*;
-use instruction::*;
-use state::*;
+use instructions::*;
 
 declare_id!("BzsbqDh3B1zyXVDWQWBTBYLgN5LDRxShxLmAutUZtMfT");
 
@@ -16,11 +13,11 @@ declare_id!("BzsbqDh3B1zyXVDWQWBTBYLgN5LDRxShxLmAutUZtMfT");
 pub mod tasklock {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("Greetings from: {:?}", ctx.program_id);
-        Ok(())
+    pub fn initialize_project(
+        ctx: Context<InitializeProject>,
+        name: String,
+        description: String,
+    ) -> Result<()> {
+        instructions::InitializeProject::init(ctx, name, description)
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}
