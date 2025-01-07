@@ -4,8 +4,12 @@ use anchor_lang::prelude::error_code;
 pub enum TaskError {
     #[msg("Name must be 50 characters or less")]
     NameTooLong,
+    #[msg("Name must not be empty")]
+    EmptyName,
     #[msg("Description must be 200 characters or less")]
     DescriptionTooLong,
+    #[msg("Description must not be empty")]
+    EmptyDescription,
     #[msg("Title must be 50 characters or less")]
     TitleTooLong,
     #[msg("Deadline must be in the future")]

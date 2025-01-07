@@ -9,9 +9,6 @@ use instructions::*;
 
 declare_id!("BzsbqDh3B1zyXVDWQWBTBYLgN5LDRxShxLmAutUZtMfT");
 
-pub const MAX_NAME_LEN: usize = 50;
-pub const MAX_DESCRIPTION_LEN: usize = 200;
-
 #[program]
 pub mod tasklock {
     use super::*;

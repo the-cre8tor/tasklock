@@ -3,7 +3,6 @@ use anchor_lang::prelude::*;
 use crate::errors::TaskError;
 use crate::events::ProjectCreated;
 use crate::state::Project;
-use crate::{MAX_DESCRIPTION_LEN, MAX_NAME_LEN};
 
 #[derive(Accounts)]
 #[instruction(name: String, description: String)]
@@ -28,11 +27,10 @@ impl<'info> InitializeProject<'info> {
     ///   - name: The name of the project (max 50 chars)
     ///   - description: The project description (max 200 chars)
     pub fn init(ctx: Context<InitializeProject>, name: String, description: String) -> Result<()> {
-        require!(name.len() <= MAX_NAME_LEN, TaskError::NameTooLong);
-        require!(
-            description.len() <= MAX_DESCRIPTION_LEN,
-            TaskError::DescriptionTooLong
-        );
+        require!(name.len() <= 20, TaskError::NameTooLong);
+        require!(description.len() <= 200, TaskError::DescriptionTooLong);
+        require!(!name.trim().is_empty(), TaskError::EmptyName);
+        require!(!description.trim().is_empty(), TaskError::EmptyDescription);
 
         let project = &mut ctx.accounts.project;
 
