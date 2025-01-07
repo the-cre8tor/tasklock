@@ -29,4 +29,8 @@ pub mod tasklock {
     ) -> Result<()> {
         instructions::CreateTask::run(ctx, title, description, deadline)
     }
+
+    pub fn assign_task(ctx: Context<AssignTask>, new_assignee: Pubkey) -> Result<()> {
+        instructions::AssignTask::run(ctx, new_assignee)
+    }
 }

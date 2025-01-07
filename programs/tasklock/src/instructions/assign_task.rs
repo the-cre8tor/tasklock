@@ -1,6 +1,8 @@
 use anchor_lang::prelude::*;
 
-use crate::state::{Project, Task};
+use crate::errors::TaskError;
+use crate::events::TaskAssigned;
+use crate::state::{Project, Task, TaskStatus};
 
 /// This is an Account Validation Struct which defines what accounts are required and how they should be validated for a particular instruction.
 /// This struct specifically defines the account constraints and validation rules that must be met when executing the assign_task instruction. Let's break down what it does:
@@ -38,4 +40,32 @@ pub struct AssignTask<'info> {
         bump = task.bump
     )]
     pub task: Account<'info, Task>,
+}
+
+impl<'info> AssignTask<'info> {
+    pub fn run(ctx: Context<AssignTask>, new_assignee: Pubkey) -> Result<()> {
+        let task = &mut ctx.accounts.task;
+
+        require!(
+            task.status != TaskStatus::Completed,
+            TaskError::TaskAlreadyCompleted
+        );
+
+        // Only project owner or current assignee can reassign
+        require!(
+            ctx.accounts.owner.key() == ctx.accounts.project.owner
+                || ctx.accounts.owner.key() == task.assignee,
+            TaskError::UnauthorizedAssignment
+        );
+
+        task.assignee = new_assignee;
+
+        emit!(TaskAssigned {
+            project: ctx.accounts.project.key(),
+            task: task.key(),
+            assignee: new_assignee
+        });
+
+        Ok(())
+    }
 }
