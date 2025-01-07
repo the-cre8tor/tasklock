@@ -33,4 +33,8 @@ pub mod tasklock {
     pub fn assign_task(ctx: Context<AssignTask>, new_assignee: Pubkey) -> Result<()> {
         instructions::AssignTask::run(ctx, new_assignee)
     }
+
+    pub fn complete_task(ctx: Context<CompleteTask>) -> Result<()> {
+        instructions::CompleteTask::run(ctx)
+    }
 }
