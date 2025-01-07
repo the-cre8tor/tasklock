@@ -1,5 +1,6 @@
-use crate::state::Project;
 use anchor_lang::prelude::*;
+
+use crate::state::Project;
 
 #[derive(Accounts)]
 #[instruction(name: String, description: String)]
