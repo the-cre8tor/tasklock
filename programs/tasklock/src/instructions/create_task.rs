@@ -31,3 +31,13 @@ pub struct CreateTask<'info> {
 
     pub system_program: Program<'info, System>,
 }
+
+impl<'info> CreateTask<'info> {
+    pub fn init(
+        ctx: Context<CreateTask>,
+        title: String,
+        description: String,
+        deadline: i64,
+    ) -> Result<()> {
+    }
+}

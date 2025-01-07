@@ -3,6 +3,7 @@ use anchor_lang::prelude::*;
 use crate::errors::TaskError;
 use crate::events::ProjectCreated;
 use crate::state::Project;
+use crate::{MAX_DESCRIPTION_LEN, MAX_NAME_LEN};
 
 #[derive(Accounts)]
 #[instruction(name: String, description: String)]
@@ -22,13 +23,14 @@ pub struct InitializeProject<'info> {
 }
 
 impl<'info> InitializeProject<'info> {
-    const MAX_NAME_LEN: usize = 50;
-    const MAX_DESCRIPTION_LEN: usize = 200;
-
+    /// Initializes a new project with the given name and description
+    /// Parameters:
+    ///   - name: The name of the project (max 50 chars)
+    ///   - description: The project description (max 200 chars)
     pub fn init(ctx: Context<InitializeProject>, name: String, description: String) -> Result<()> {
-        require!(name.len() <= Self::MAX_NAME_LEN, TaskError::NameTooLong);
+        require!(name.len() <= MAX_NAME_LEN, TaskError::NameTooLong);
         require!(
-            description.len() <= Self::MAX_DESCRIPTION_LEN,
+            description.len() <= MAX_DESCRIPTION_LEN,
             TaskError::DescriptionTooLong
         );
 
