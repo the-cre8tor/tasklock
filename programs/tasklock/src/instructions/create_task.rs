@@ -1,6 +1,8 @@
 use anchor_lang::prelude::*;
 
-use crate::state::{Project, Task};
+use crate::errors::TaskError;
+use crate::events::TaskCreated;
+use crate::state::{Project, Task, TaskStatus};
 
 #[derive(Accounts)]
 #[instruction(title: String, description: String)]
@@ -33,11 +35,54 @@ pub struct CreateTask<'info> {
 }
 
 impl<'info> CreateTask<'info> {
-    pub fn init(
+    pub fn run(
         ctx: Context<CreateTask>,
         title: String,
         description: String,
         deadline: i64,
     ) -> Result<()> {
+        require!(title.len() <= 50, TaskError::TitleTooLong);
+        require!(description.len() <= 200, TaskError::TitleTooLong);
+        require!(!title.trim().is_empty(), TaskError::EmptyTitle);
+        require!(!description.trim().is_empty(), TaskError::EmptyDescription);
+
+        let current_time = Clock::get()?.unix_timestamp;
+        require!(deadline > current_time, TaskError::InvalidDeadline);
+
+        let project = &mut ctx.accounts.project;
+        let task = &mut ctx.accounts.task;
+
+        require!(project.task_count < u32::MAX, TaskError::MaxTasksReached);
+
+        task.project = project.key();
+        task.title = title;
+        task.description = description;
+        task.creator = ctx.accounts.owner.key();
+        task.assignee = ctx.accounts.owner.key();
+        task.status = TaskStatus::Created;
+        task.created_at = current_time;
+        task.deadline = deadline;
+        task.completed_at = None;
+        task.task_id = project.task_count;
+        task.bump = ctx.bumps.task;
+
+        project.task_count = project
+            .task_count
+            .checked_add(1)
+            .ok_or(TaskError::Overflow)?;
+
+        project.active_tasks = project
+            .active_tasks
+            .checked_add(1)
+            .ok_or(TaskError::Overflow)?;
+
+        emit!(TaskCreated {
+            project: project.key(),
+            task: task.key(),
+            creator: task.creator,
+            title: task.title.clone()
+        });
+
+        Ok(())
     }
 }

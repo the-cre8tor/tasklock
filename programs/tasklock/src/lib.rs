@@ -20,4 +20,13 @@ pub mod tasklock {
     ) -> Result<()> {
         instructions::InitializeProject::init(ctx, name, description)
     }
+
+    pub fn create_task(
+        ctx: Context<CreateTask>,
+        title: String,
+        description: String,
+        deadline: i64,
+    ) -> Result<()> {
+        instructions::CreateTask::run(ctx, title, description, deadline)
+    }
 }

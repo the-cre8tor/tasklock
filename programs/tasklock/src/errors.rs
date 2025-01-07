@@ -12,6 +12,8 @@ pub enum TaskError {
     EmptyDescription,
     #[msg("Title must be 50 characters or less")]
     TitleTooLong,
+    #[msg("Title must not be empty")]
+    EmptyTitle,
     #[msg("Deadline must be in the future")]
     InvalidDeadline,
     #[msg("Maximum number of tasks reached")]
